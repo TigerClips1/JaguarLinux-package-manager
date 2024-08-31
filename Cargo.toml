@@ -1,3 +1,6 @@
+[workspace]
+members = ["ps4-repo-gen"]
+
 [package]
 name = "ps4"
 version = "0.1.0"
@@ -18,3 +21,5 @@ version-compare = "0.2.0"
 
 [profile.release]
 strip = true
+
+
