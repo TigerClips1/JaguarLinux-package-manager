@@ -1,0 +1,20 @@
+[package]
+name = "ps4"
+version = "0.1.0"
+edition = "2021"
+authors = ["TigerClips1 <tigerclips1@ps4repo.site>"]
+
+[dependencies]
+flate2 = "1.0.33"
+hex = "0.4.3"
+isahc = "1.7.2"
+ring = "0.17.8"
+rusqlite = "0.32.1"
+serde = { version = "1.0.209", features = ["derive"] }
+serde_json = "1.0.127"
+sudo = "0.6.0"
+tar = "0.4.41"
+version-compare = "0.2.0"
+
+[profile.release]
+strip = true
