@@ -35,23 +35,23 @@ if [ ! -f PKGBUILD ]; then
 fi
 
 
-# Source the PKGBUILD
+# Source the PKGSCRIPT
 . PKGBUILD
-PKGBUILDDIR="$(pwd)"
+PKGSCRIPTDIR="$(pwd)"
 
 # Package building functions
 
 function make_package() {
-    echo " Building ${NAME} v${VERSION}-${UPSTREAM}"
-    cd ${PKGBUILDDIR}
+    echo "=== Building ${NAME} v${VERSION}-${UPSTREAM} ==="
+    cd ${PKGSCRIPTDIR}
 
     mkdir -p "${NAME}-${VERSION}-${UPSTREAM}"
     cd "${NAME}-${VERSION}-${UPSTREAM}"
     mkdir -p export/data
 
     WORKDIR="$(pwd)"
-    BUILD_DATA_ROOT="${WORKDIR}/pkg/data"
-    BUILD_ROOT="${WORKDIR}/pkg"
+    BUILD_DATA_ROOT="${WORKDIR}/export/data"
+    BUILD_ROOT="${WORKDIR}/export"
 
     # Download from SRC array with curl
     for i in "${!SRC[@]}"; do
@@ -69,34 +69,34 @@ function make_package() {
 
 
         if [[ -f "${PKGSCRIPTDIR}/${SRC_URL}" ]]; then
-            echo " Using local file ${PKGBUILDDIR}/${SRC_URL} "
+            echo "=== Using local file ${PKGSCRIPTDIR}/${SRC_URL} ==="
             cp -r "${PKGSCRIPTDIR}/${SRC_URL}" "${WORKDIR}"
             continue
         else
             if ! curl --head --output /dev/null --silent --fail ${SRC_URL};
             then
-                echo " Invalid URL/Path! "
+                echo "=== Invalid URL/Path! ==="
                 exit 1
             fi
         fi
 
-        echo " Downloading from ${SRC_URL}"
+        echo "=== Downloading from ${SRC_URL} ==="
         curl -L "${SRC_URL}" -o "$(basename ${SRC_URL})"
         
         # Verify the download with a checksum from SUM array
         if [ "${SUM_TYPE}" = "sha512" ]; then
             if  ! [ "${SUM[i]}" = "$(sha512sum "$(basename ${SRC_URL})" | cut -d ' ' -f 1)" ]; then
-                echo " Checksum mismatch! "
+                echo "=== Checksum mismatch! ==="
                 exit 1
             fi
         elif [ "${SUM_TYPE}" = "sha256" ]; then
             if ! [ "${SUM[i]}" = "$(sha256sum "$(basename ${SRC_URL})" | cut -d ' ' -f 1)" ]; then
-                echo " Checksum mismatch!"
+                echo "=== Checksum mismatch! ==="
                 exit 1
             fi
         elif [ "${SUM_TYPE}" = "md5" ]; then
             if ! [ "${SUM[i]}" = "$(md5sum "$(basename ${SRC_URL})" | cut -d ' ' -f 1)" ]; then
-                echo "Checksum mismatch!"
+                echo "=== Checksum mismatch! ==="
                 exit 1
             fi
         fi
@@ -107,36 +107,36 @@ function make_package() {
             if [ -n "${SRC_FOLDER}" ]; then
                 mkdir ${WORKDIR}/${SRC_FOLDER}
                 if [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "gzip" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
+                    echo "=== Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} ==="
                     tar xvzf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-xz" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
+                    echo "=== Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} ==="
                     tar xvJf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-bzip2" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
+                    echo "=== Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} ==="
                     tar xvjf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-tar" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
+                    echo "=== Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} ==="
                     tar xvf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "zip" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
+                    echo "=== Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} ==="
                     unzip "$(basename ${SRC_URL})" -d ${SRC_FOLDER}
                 fi
             else
                 if [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "gzip" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) "
+                    echo "=== Extracting $(basename ${SRC_URL}) ==="
                     tar xvzf "$(basename ${SRC_URL})"
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-xz" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) "
+                    echo "=== Extracting $(basename ${SRC_URL}) ==="
                     tar xvJf "$(basename ${SRC_URL})"
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-bzip2" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) "
+                    echo "=== Extracting $(basename ${SRC_URL}) ==="
                     tar xvjf "$(basename ${SRC_URL})"
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-tar" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) "
+                    echo "=== Extracting $(basename ${SRC_URL}) ==="
                     tar xvf "$(basename ${SRC_URL})" 
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "zip" ]; then
-                    echo " Extracting $(basename ${SRC_URL}) "
+                    echo "=== Extracting $(basename ${SRC_URL}) ==="
                     unzip "$(basename ${SRC_URL})"
                 fi
             fi
@@ -144,9 +144,9 @@ function make_package() {
     done    
 
     cd ${WORKDIR}
-    prepare || echo " Skipping prepare... "
+    prepare || echo "=== Skipping prepare... ==="
     cd ${WORKDIR}
-    build || echo " Skipping build... "
+    build || echo "=== Skipping build... ==="
 
     # Enter fakeroot to do the packaging
     enter_fakeroot
@@ -154,14 +154,14 @@ function make_package() {
     cd ${WORKDIR}
 
     # Compress the build data root into the package
-    echo " Compressing ${NAME}-${VERSION}-${UPSTREAM} "
+    echo "=== Compressing ${NAME}-${VERSION}-${UPSTREAM} ==="
 
     cd ${BUILD_DATA_ROOT}
 
     tar cf "${BUILD_ROOT}/data.tar" ./*
 
-    xz "${BUILD_ROOT}/data.tar"
-    DATA_SHA=$(sha512sum "${BUILD_ROOT}/data.tar.gz" | cut -d ' ' -f 1)
+    gzip -9  "${BUILD_ROOT}/data.tar"
+    #DATA_SHA=$(sha512sum "${BUILD_ROOT}/data.tar.xz" | cut -d ' ' -f 1)
 
     cd ${BUILD_ROOT}
     cat << EOL > PKG
@@ -178,31 +178,30 @@ function make_package() {
     "provides": "$(join_by , "${PROVIDES[@]}")",
     "conflicts": "$(join_by , "${CONFLICTS[@]}")",
     "replaces": "$(join_by , "${REPLACES[@]}")",
-    "sha512sum": "${DATA_SHA}"
 }
 EOL
 
-    tar cf "${PKGBUILDDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PKG data.tar.xz
-    xz "${PKGBUILDDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
+    tar cvf "${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PKG data.tar.gz
+    xz "${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
 
-    echo " Done building ${NAME} v${VERSION}-${UPSTREAM}, see ${PKGBUILDDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar.xz "
+    echo "=== Done building ${NAME} v${VERSION}-${UPSTREAM}, see ${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar.gz ==="
 
     return 0
 }
 
 function install_package() {
-    echo " Installing ${NAME} v${VERSION}-${UPSTREAM} "
-    cd ${PKGBUILDDIR}
+    echo "=== Installing ${NAME} v${VERSION}-${EPOCH} ==="
+    cd ${PKGSCRIPTDIR}
 
-    bulge li "${NAME}-${VERSION}-${UPSTREAM}.tar.gz"
+    ps4 li "${NAME}-${VERSION}-${UPSTREAM}.tar.gz"
 
     return 0
 }
 
 # Clean the package build directory
 function clean_package() {
-    echo " Cleaning ${NAME} v${VERSION}-${UPSTREAM} "
-    cd ${PKGBUILDDIR}
+    echo "=== Cleaning ${NAME} v${VERSION}-${EPOCH} ==="
+    cd ${PKGSCRIPTDIR}
 
     rm -r "${NAME}-${VERSION}-${UPSTREAM}"
     rm "${NAME}-${VERSION}-${UPSTREAM}.tar.gz"
@@ -218,13 +217,13 @@ function do_fakeroot_package() {
     BUILD_ROOT="${WORKDIR}/export"
 
     cd ${WORKDIR}
-    postbuild || echo " Skipping postbuild... "
+    postbuild || echo "=== Skipping postbuild... ==="
 
     return 0;
 }
 
-function create_.SRCINFO() {
-    cat << EOL > PKGINFO
+function create_PKGINFO() {
+    cat << EOL > .PKGSRC
 {
     "name": "${NAME}",
     "version": "${VERSION}",
@@ -266,7 +265,7 @@ function jsonify {
 }
 
 enter_fakeroot() {
-	echo " Entering fakeroot "
+	echo "=== Entering fakeroot ==="
     
     cd ${PKGSCRIPTDIR}
 	fakeroot -- bash -$- "${BASH_SOURCE[0]}" -f || return $?
@@ -278,7 +277,7 @@ function help() {
     echo "  -h"
     echo "      Print this help message"
     echo "  -b"
-    echo "      Build a package based on the PKGBUILD in the current working directory"
+    echo "      Build a package based on the PKGSCRIPT in the current working directory"
     echo "  -i"
     echo "      Install the built package"
     echo "  -c"
@@ -305,9 +304,9 @@ while getopts ":hbicpf" opt; do
             create_PKGINFO
             ;;
         f)
-            cd "${PKGBUILDDIR}"
+            cd "${PKGSCRIPTDIR}"
             do_fakeroot_package
-            echo " Exiting fakeroot "
+            echo "=== Exiting fakeroot ==="
             exit 0
             ;;
         \?)
