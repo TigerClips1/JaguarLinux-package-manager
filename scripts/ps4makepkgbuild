@@ -35,7 +35,7 @@ if [ ! -f PKGBUILD ]; then
 fi
 
 
-# Source the PKGSCRIPT
+# Source the PKGBUILD
 . PKGBUILD
 PKGBUILDDIR="$(pwd)"
 
@@ -43,7 +43,7 @@ PKGBUILDDIR="$(pwd)"
 
 function make_package() {
     echo " Building ${NAME} v${VERSION}-${UPSTREAM}"
-    cd ${PKGSCRIPTDIR}
+    cd ${PKGBUILDDIR}
 
     mkdir -p "${NAME}-${VERSION}-${UPSTREAM}"
     cd "${NAME}-${VERSION}-${UPSTREAM}"
@@ -108,16 +108,16 @@ function make_package() {
                 mkdir ${WORKDIR}/${SRC_FOLDER}
                 if [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "gzip" ]; then
                     echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
-                    tar xzf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
+                    tar xvzf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-xz" ]; then
                     echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
-                    tar xJf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
+                    tar xvJf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-bzip2" ]; then
                     echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
-                    tar xjf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
+                    tar xvjf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-tar" ]; then
                     echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
-                    tar xf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
+                    tar xvf "$(basename ${SRC_URL})" -C ${SRC_FOLDER}
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "zip" ]; then
                     echo " Extracting $(basename ${SRC_URL}) into ${SRC_FOLDER} "
                     unzip "$(basename ${SRC_URL})" -d ${SRC_FOLDER}
@@ -125,16 +125,16 @@ function make_package() {
             else
                 if [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "gzip" ]; then
                     echo " Extracting $(basename ${SRC_URL}) "
-                    tar xzf "$(basename ${SRC_URL})"
+                    tar xvzf "$(basename ${SRC_URL})"
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-xz" ]; then
                     echo " Extracting $(basename ${SRC_URL}) "
-                    tar xJf "$(basename ${SRC_URL})"
+                    tar xvJf "$(basename ${SRC_URL})"
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-bzip2" ]; then
                     echo " Extracting $(basename ${SRC_URL}) "
-                    tar xjf "$(basename ${SRC_URL})"
+                    tar xvjf "$(basename ${SRC_URL})"
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "x-tar" ]; then
                     echo " Extracting $(basename ${SRC_URL}) "
-                    tar xf "$(basename ${SRC_URL})" 
+                    tar xvf "$(basename ${SRC_URL})" 
                 elif [ "$(file -b --mime-type "$(basename ${SRC_URL})" | cut -d '/' -f 2)" = "zip" ]; then
                     echo " Extracting $(basename ${SRC_URL}) "
                     unzip "$(basename ${SRC_URL})"
@@ -185,14 +185,14 @@ EOL
     tar cf "${PKGBUILDDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PKG data.tar.xz
     xz "${PKGBUILDDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
 
-    echo " Done building ${NAME} v${VERSION}-${UPSTREAM}, see ${PKGSCRIPTDIR}/${NAME}-${VERSION}-${EPOCH}.tar.xz "
+    echo " Done building ${NAME} v${VERSION}-${UPSTREAM}, see ${PKGBUILDDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar.xz "
 
     return 0
 }
 
 function install_package() {
     echo " Installing ${NAME} v${VERSION}-${UPSTREAM} "
-    cd ${PKGSCRIPTDIR}
+    cd ${PKGBUILDDIR}
 
     bulge li "${NAME}-${VERSION}-${UPSTREAM}.tar.gz"
 
@@ -202,7 +202,7 @@ function install_package() {
 # Clean the package build directory
 function clean_package() {
     echo " Cleaning ${NAME} v${VERSION}-${UPSTREAM} "
-    cd ${PKGSCRIPTDIR}
+    cd ${PKGBUILDDIR}
 
     rm -r "${NAME}-${VERSION}-${UPSTREAM}"
     rm "${NAME}-${VERSION}-${UPSTREAM}.tar.gz"
@@ -211,7 +211,7 @@ function clean_package() {
 }
 
 function do_fakeroot_package() {
-    cd "${NAME}-${VERSION}-${EPOCH}"
+    cd "${NAME}-${VERSION}-${UPSTREAM}"
 
     WORKDIR="$(pwd)"
     BUILD_DATA_ROOT="${WORKDIR}/export/data"
@@ -223,12 +223,12 @@ function do_fakeroot_package() {
     return 0;
 }
 
-function create_PKGINFO() {
+function create_.SRCINFO() {
     cat << EOL > PKGINFO
 {
     "name": "${NAME}",
     "version": "${VERSION}",
-    "epoch": ${UPSTREAM},
+    "upstream": ${UPSTREAM},
     "description": "${DESC}",
     "groups": $(jsonify "${GRPS[@]}"),
     "url": "${URL}",
@@ -278,7 +278,7 @@ function help() {
     echo "  -h"
     echo "      Print this help message"
     echo "  -b"
-    echo "      Build a package based on the PKGSCRIPT in the current working directory"
+    echo "      Build a package based on the PKGBUILD in the current working directory"
     echo "  -i"
     echo "      Install the built package"
     echo "  -c"
@@ -305,7 +305,7 @@ while getopts ":hbicpf" opt; do
             create_PKGINFO
             ;;
         f)
-            cd "${PKGSCRIPTDIR}"
+            cd "${PKGBUILDDIR}"
             do_fakeroot_package
             echo " Exiting fakeroot "
             exit 0
