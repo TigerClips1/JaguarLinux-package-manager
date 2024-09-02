@@ -158,10 +158,10 @@ function make_package() {
 
     cd ${BUILD_DATA_ROOT}
 
-    tar cf "${BUILD_ROOT}/data.tar" ./*
+    tar cvf "${BUILD_ROOT}/data.tar" ./*
 
     gzip -9  "${BUILD_ROOT}/data.tar"
-    #DATA_SHA=$(sha512sum "${BUILD_ROOT}/data.tar.xz" | cut -d ' ' -f 1)
+    #DATA_SHA=$(sha512sum "${BUILD_ROOT}/data.tar.gz" | cut -d ' ' -f 1)
 
     cd ${BUILD_ROOT}
     cat << EOL > PKG
@@ -182,7 +182,7 @@ function make_package() {
 EOL
 
     tar cvf "${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PKG data.tar.gz
-    xz "${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
+    gzip -9  "${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
 
     echo "=== Done building ${NAME} v${VERSION}-${UPSTREAM}, see ${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar.gz ==="
 
@@ -190,7 +190,7 @@ EOL
 }
 
 function install_package() {
-    echo "=== Installing ${NAME} v${VERSION}-${EPOCH} ==="
+    echo "=== Installing ${NAME} v${VERSION}-${UPSTREAM} ==="
     cd ${PKGSCRIPTDIR}
 
     ps4 li "${NAME}-${VERSION}-${UPSTREAM}.tar.gz"
@@ -200,7 +200,7 @@ function install_package() {
 
 # Clean the package build directory
 function clean_package() {
-    echo "=== Cleaning ${NAME} v${VERSION}-${EPOCH} ==="
+    echo "=== Cleaning ${NAME} v${VERSION}-${UPSTREAM} ==="
     cd ${PKGSCRIPTDIR}
 
     rm -r "${NAME}-${VERSION}-${UPSTREAM}"
