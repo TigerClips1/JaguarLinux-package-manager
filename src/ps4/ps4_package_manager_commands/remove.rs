@@ -41,7 +41,7 @@ pub fn remove(args: Vec<String>) {
     lock_exists();
     create_lock().expect("Failed to create lock file. (Does /tmp/ps4.lock already exist?)");
 
-    println!(" Getting  ps4 packages...");
+    println!(" removeing  ps4 packages...");
     let raw_packages: Vec<String> = args.clone().drain(2..).collect();
     let mut packages: HashSet<InstalledPS4Packages> = HashSet::new();
 

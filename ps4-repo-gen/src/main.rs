@@ -94,11 +94,11 @@ fn main() {
     println!("=== Generating {} ===", &config.name);
     */
 
-    println!(" Generating {} at {} ", "Database", current_unix_time);
+    println!(" Generating {} at {} ", "PS4 Database", current_unix_time);
 
     // Create the initial sqlite database with rust-sqlite
     println!(" Creating Database ");
-    let mut db = Connection::open("database.db").expect("Failed to create database! Aborting...");
+    let mut db = Connection::open("ps4.db").expect("Failed to create database! Aborting...");
 
     db.execute(
         "create table if not exists packages
@@ -132,7 +132,7 @@ fn main() {
         .filter_entry(|e| !is_hidden(e))
         .filter_map(|e| e.ok()) {
         if entry.file_name().to_str().unwrap().ends_with(".SRCINFO") {
-            // Load the PKGINFO file as JSON and put it into PackageInfo
+            // Load the .SRCINFO file as JSON and put it into PackageInfo
             let package_info_file_contents = std::fs::read_to_string(entry.path()).unwrap();
             let package_info: PackageInfo = serde_json::from_str(&package_info_file_contents).unwrap();
 
@@ -179,19 +179,19 @@ fn main() {
 
     tx.commit().expect("Failed to commit transaction!");
     
-    File::create("database.flat").expect("Failed to create flat db")
+    File::create("ps4.flat").expect("Failed to create flat db")
         .write_all(flat_db.as_ref()).expect("Failed to write flat db");
 
     println!(" Database Populated!");
 
     println!(" Generating Hash");
-    let mut database_file = File::open("database.db").expect("Failed to open database.db! Aborting...");
+    let mut database_file = File::open("ps4.db").expect("Failed to open ps4.db! Aborting...");
 
     let mut context = Context::new(&SHA512);
     let mut buffer = [0; 1024];
 
     loop {
-        let read = database_file.read(&mut buffer).expect("Failed to read database.db! Aborting...");
+        let read = database_file.read(&mut buffer).expect("Failed to read ps4.db! Aborting...");
         if read == 0 {
             break;
         }
@@ -203,8 +203,8 @@ fn main() {
 
     println!("=> Hash: {}", &hash_string);
 
-    let mut database_hash_file = File::create("database.hash").expect("Failed to create database.hash! Aborting...");
-    database_hash_file.write_all(hash_string.as_ref()).expect("Failed to write to database.hash! Aborting...");
+    let mut database_hash_file = File::create("ps4.hash").expect("Failed to create ps4.hash! Aborting...");
+    database_hash_file.write_all(hash_string.as_ref()).expect("Failed to write to ps4.hash! Aborting...");
     println!(" Hash File Created!");
     println!(" Hash Generated! ");
 

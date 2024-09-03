@@ -46,8 +46,8 @@ pub fn run_install(install: InstallTransaction, file: File) {
     package_tar.unpack(format!("{}/tmp/ps4/{}", get_root(), &install.package.name))
         .expect("Failed to unpack package");
 
-    let package = decode_pkg_file(fs::File::open(format!("{}/tmp/ps4/{}/PKG", get_root(), &install.package.name))
-        .expect("Failed to open PKG file!"));
+    let package = decode_pkg_file(fs::File::open(format!("{}/tmp/ps4/{}/PS4PKG", get_root(), &install.package.name))
+        .expect("Failed to open PS4PKG file!"));
 
     // Check if package is already installed
     let installed_pkg = get_installed_package(&package.name);

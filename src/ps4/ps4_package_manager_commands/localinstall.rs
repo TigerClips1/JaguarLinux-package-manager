@@ -59,8 +59,8 @@ pub fn local_install(args: Vec<String>) {
             let mut package_tar = decompress_gz(fs::File::open(i).expect("Failed to read package!"));
             package_tar.unpack(format!("{}/tmp/ps4/{}", get_root(), &i)).unwrap();
 
-            let package = decode_pkg_file(fs::File::open(format!("{}/tmp/ps4/{}/PKG", get_root(), &i))
-                .expect("Failed to open PKG file!"));
+            let package = decode_pkg_file(fs::File::open(format!("{}/tmp/ps4/{}/PS4PKG", get_root(), &i))
+                .expect("Failed to open PS4PKG file!"));
 
             package_queue.insert(InstallTransaction {
                 package: package,

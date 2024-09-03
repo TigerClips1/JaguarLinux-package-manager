@@ -43,7 +43,7 @@ pub fn decode_pkg_file(pkg: File) -> PS4Package {
 pub fn check_if_package(mut gztar: Archive<GzDecoder<File>>) -> bool {    
     // Look for PKG file
     for file in gztar.entries().unwrap() {
-        if file.unwrap().header().path().unwrap() == Path::new("PKG") {
+        if file.unwrap().header().path().unwrap() == Path::new("PS4PKG") {
             // If a PKG file is found then this is a valid package
             return true;
         }                
