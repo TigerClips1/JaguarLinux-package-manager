@@ -35,15 +35,15 @@ if [ ! -f PKGBUILD ]; then
 fi
 
 
-# Source the PKGSCRIPT
+# Source the PKGBUILD
 . PKGBUILD
-PKGBUILDIR="$(pwd)"
+PKGSCRIPTDIR="$(pwd)"
 
 # Package building functions
 
 function make_package() {
     echo "=== Building ${NAME} v${VERSION}-${UPSTREAM} ==="
-    cd ${PKGBUILDIR}
+    cd ${PKGSCRIPTDIR}
 
     mkdir -p "${NAME}-${VERSION}-${UPSTREAM}"
     cd "${NAME}-${VERSION}-${UPSTREAM}"
@@ -69,8 +69,8 @@ function make_package() {
 
 
         if [[ -f "${PKGBUILDIR}/${SRC_URL}" ]]; then
-            echo "=== Using local file ${PKGBUILDIR}/${SRC_URL} ==="
-            cp -r "${PKGBUILDIR}/${SRC_URL}" "${WORKDIR}"
+            echo "=== Using local file ${PKGSCRIPTDIR}/${SRC_URL} ==="
+            cp -r "${PKGSCRIPTDIR}/${SRC_URL}" "${WORKDIR}"
             continue
         else
             if ! curl --head --output /dev/null --silent --fail ${SRC_URL};
@@ -182,8 +182,8 @@ function make_package() {
 }
 EOL
 
-    tar cvf "${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PS4PKG data.tar.gz
-    gzip -9  "${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
+    tar cvf "${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PS4PKG data.tar.gz
+    gzip -9  "${PKGSCRIPTDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
 
     echo "=== Done building ${NAME} v${VERSION}-${UPSTREAM}, see ${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar.gz ==="
 
@@ -191,8 +191,8 @@ EOL
 }
 
 function install_package() {
-    echo "=== Installing ${NAME} v${VERSION}-${UPSTREAM} ==="
-    cd ${PKGBUILDIR}
+    echo "=== Installing ${NAME}-${VERSION}-${UPSTREAM} ==="
+    cd ${PKGSCRIPTDIR}
 
     ps4 li "${NAME}-${VERSION}-${UPSTREAM}.tar.gz"
 
@@ -202,7 +202,7 @@ function install_package() {
 # Clean the package build directory
 function clean_package() {
     echo "=== Cleaning ${NAME} v${VERSION}-${UPSTREAM} ==="
-    cd ${PKGBUILDIR}
+    cd ${PKGSCRIPTDIR}
 
     rm -r "${NAME}-${VERSION}-${UPSTREAM}"
     rm "${NAME}-${VERSION}-${UPSTREAM}.tar.gz"
@@ -305,7 +305,7 @@ while getopts ":hbicpf" opt; do
             create_PKGINFO
             ;;
         f)
-            cd "${PKGBUILDIR}"
+            cd "${PKGSCRIPTDIR}"
             do_fakeroot_package
             echo "=== Exiting fakeroot ==="
             exit 0
