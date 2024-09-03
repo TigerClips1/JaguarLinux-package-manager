@@ -278,7 +278,7 @@ function help() {
     echo "  -h"
     echo "      Print this help message"
     echo "  -b"
-    echo "      Build a package based on the PKGSCRIPT in the current working directory"
+    echo "      Build a package based on the PKGBUILD in the current working directory"
     echo "  -i"
     echo "      Install the built package"
     echo "  -c"
