@@ -143,7 +143,7 @@ fn main() {
                     (
                         name,
                         version,
-                        epoch,
+                        upstream,
                         description,
                         groups,
                         url,
