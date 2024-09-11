@@ -35,7 +35,7 @@ if [ ! -f PKGBUILD ]; then
 fi
 
 
-# Source the PKGSCRIPT
+# Source the PKGBUILD
 . PKGBUILD
 PKGBUILDIR="$(pwd)"
 
@@ -181,6 +181,25 @@ function make_package() {
     "replaces": "$(join_by , "${REPLACES[@]}")",
 }
 EOL
+    cat << EOL > $PKGBUILDIR/SRCINFO
+{
+    "name": "${NAME}",
+    "version": "${VERSION}",
+    "upstream": ${UPSTREAM},
+    "description": "${DESC}",
+    "groups": "$(jsonify "${GRPS[@]}")",
+    "url": "${URL}",
+    "license": "$(jsonify "${LICENSES[@]}")",
+    "depends": "$(jsonify "${DEPENDS[@]}")",
+    "optional_depends": "$(jsonify "${OPT_DEPENDS[@]}")",
+    "provides": "$(jsonify "${PROVIDES[@]}")",
+    "conflicts": "$(jsonify "${CONFLICTS[@]}")",
+    "replaces": "$(jsonify "${REPLACES[@]}")",
+    "maintainers": $(jsonify "${MAINTAINERS[@]}"),
+
+}
+EOL
+
 
     tar cvf "${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PS4PKG data.tar.gz
     gzip -9  "${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
@@ -221,27 +240,6 @@ function do_fakeroot_package() {
     postbuild || echo "=== Skipping postbuild... ==="
 
     return 0;
-}
-
-function create_SRCINFO() {
-    cat << EOL > .SRCINFO
-{
-    "name": "${NAME}",
-    "version": "${VERSION}",
-    "upstream": ${UPSTREAM},
-    "description": "${DESC}",
-    "groups": $(jsonify "${GRPS[@]}"),
-    "url": "${URL}",
-    "license": $(jsonify "${LICENSES[@]}"),
-    "depends": $(jsonify "${DEPENDS[@]}"),
-    "optional_depends": $(jsonify "${OPT_DEPENDS[@]}"),
-    "make_depends": $(jsonify "${MK_DEPENDS[@]}"),
-    "provides": $(jsonify "${PROVIDES[@]}"),
-    "conflicts": $(jsonify "${CONFLICTS[@]}"),
-    "replaces": $(jsonify "${REPLACES[@]}"),
-    "maintainers": $(jsonify "${MAINTAINERS[@]}")
-}
-EOL
 }
 
 # Misc functions
