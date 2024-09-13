@@ -33,11 +33,11 @@ use walkdir::{DirEntry, WalkDir};
 
 #[derive(Deserialize)]
 struct Config {
-    _name: String,
+    name: String,
 }
 
 #[derive(Deserialize)]
-struct PackageInfo {
+struct PackageInf {
     name: String,
     version: String,
     upstream: i32,
@@ -47,11 +47,11 @@ struct PackageInfo {
     license: Vec<String>,
     depends: Vec<String>,
     optional_depends: Vec<String>,
-    _make_depends: Vec<String>,
+    make_depends: Vec<String>,
     provides: Vec<String>,
     conflicts: Vec<String>,
     replaces: Vec<String>,
-    _maintainers: Vec<String>
+    maintainers: Vec<String>
 }
 
 /// Converts a vec of strings to a flat string separated by ","
@@ -131,7 +131,7 @@ fn main() {
     for entry in WalkDir::new("packages/").into_iter()
         .filter_entry(|e| !is_hidden(e))
         .filter_map(|e| e.ok()) {
-        if entry.file_name().to_str().unwrap().ends_with(".SRCINFO") {
+        if entry.file_name().to_str().unwrap().ends_with("SRCINFO") {
             // Load the .SRCINFO file as JSON and put it into PackageInfo
             let package_info_file_contents = std::fs::read_to_string(entry.path()).unwrap();
             let package_info: PackageInfo = serde_json::from_str(&package_info_file_contents).unwrap();
