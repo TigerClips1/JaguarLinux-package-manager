@@ -33,25 +33,25 @@ use walkdir::{DirEntry, WalkDir};
 
 #[derive(Deserialize)]
 struct Config {
-    name: String,
+    pub name: String,
 }
 
 #[derive(Deserialize)]
 struct PackageInfo {
-    name: String,
-    version: String,
-    upstream: i32,
-    description: String,
-    groups: Vec<String>,
-    url: String,
-    license: Vec<String>,
-    depends: Vec<String>,
-    optional_depends: Vec<String>,
-    make_depends: Vec<String>,
-    provides: Vec<String>,
-    conflicts: Vec<String>,
-    replaces: Vec<String>,
-    maintainers: Vec<String>
+    pub name: String,
+    pub version: String,
+    pub upstream: i32,
+    pub description: String,
+    pub groups: Vec<String>,
+    pub url: String,
+    pub license: Vec<String>,
+    pub depends: Vec<String>,
+    pub optional_depends: Vec<String>,
+    pub make_depends: Vec<String>,
+    pub provides: Vec<String>,
+    pub conflicts: Vec<String>,
+    pub replaces: Vec<String>,
+    pub maintainers: Vec<String>
 }
 
 /// Converts a vec of strings to a flat string separated by ","
