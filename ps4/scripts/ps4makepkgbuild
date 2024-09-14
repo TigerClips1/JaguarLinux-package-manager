@@ -209,12 +209,16 @@ function convert_to_json() {
 }
 EOL
 }
+   PKGOUTPUT=pkgoutput
 
-
-    tar cvf "${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PS4PKG data.tar.gz
-    gzip -9  "${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar"
+    mkdir -pv ${PKGBUILDIR}/${PKGOUTPUT}
+    tar cvf "${PKGBUILDIR}/${PKGOUTPUT}/${NAME}-${VERSION}-${UPSTREAM}.tar" PS4PKG data.tar.gz
+    gzip -9  "${PKGBUILDIR}/${PKGOUTPUT}/${NAME}-${VERSION}-${UPSTREAM}.tar"
 
     echo "=== Done building ${NAME} v${VERSION}-${UPSTREAM}, see ${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar.gz ==="
+
+    echo "=== Genrating SRCINFO file ==="
+    convert_to_json
 
     return 0
 }
@@ -310,15 +314,6 @@ while getopts ":hbicpf" opt; do
             ;;
         c)
             clean_package
-            ;;
-        p)
-            convert_to_json
-            ;;
-        f)
-            cd "${PKGBUILDIR}"
-            do_fakeroot_package
-            echo "=== Exiting fakeroot ==="
-            exit 0
             ;;
         \?)
             echo "Invalid option: -$OPTARG" >&2
