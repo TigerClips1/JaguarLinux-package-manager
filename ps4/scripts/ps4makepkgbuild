@@ -280,6 +280,9 @@ function jsonify {
 }
 
 enter_fakeroot() {
+      if [ $EUID -eq 0 ]; then  
+         echo "Runing as root"
+      fi
 	echo "=== Entering fakeroot ==="
     
     cd ${PKGBUILDIR}
