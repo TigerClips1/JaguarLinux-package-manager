@@ -37,7 +37,7 @@ struct Config {
 }
 
 #[derive(Deserialize)]
-struct PackageInf {
+struct PackageInfo {
     name: String,
     version: String,
     upstream: i32,
