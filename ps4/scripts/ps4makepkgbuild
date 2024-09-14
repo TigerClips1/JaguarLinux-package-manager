@@ -319,6 +319,13 @@ while getopts ":hbicpf" opt; do
         c)
             clean_package
             ;;
+        f)
+            cd "${PKGBUILDIR}"
+            do_fakeroot_package
+            echo "=== Exiting fakeroot ==="
+            exit 0
+            ;;
+
         \?)
             echo "Invalid option: -$OPTARG" >&2
             exit 1
