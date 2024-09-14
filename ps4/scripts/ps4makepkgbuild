@@ -28,7 +28,7 @@ SCRIPTNAME="$(basename "$0")"
 
 SAVED_ARGS="$@"
 
-if (( $EUID == 1 )); then
+if (( "$EUID" -eq 0)); then
     echo "Please Do not run this script as root or it will break the entire script we will only run if  it's neccesary Automatically"
     exit
 fi
