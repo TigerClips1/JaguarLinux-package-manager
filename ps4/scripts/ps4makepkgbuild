@@ -28,10 +28,11 @@ SCRIPTNAME="$(basename "$0")"
 
 SAVED_ARGS="$@"
 
-if (( "$EUID" -eq 0)); then
-    echo "Please Do not run this script as root or it will break the entire script we will only run if  it's neccesary Automatically"
-    exit
+if [ $EUID -eq 0 ]; then  
+      echo "Please Do not run this script as root or it will break the entire script we will only run if  it's neccesary Automatically"
+      exit 1
 fi
+
 
 # Check if PKGBUILD exists in the current directory and exit if not
 if [ ! -f PKGBUILD ]; then
