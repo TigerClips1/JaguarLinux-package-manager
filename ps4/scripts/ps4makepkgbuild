@@ -28,6 +28,11 @@ SCRIPTNAME="$(basename "$0")"
 
 SAVED_ARGS="$@"
 
+if (( $EUID == 1 )); then
+    echo "Please Do not run this script as root or it will break the entire script we will only run if  it's neccesary Automatically"
+    exit
+fi
+
 # Check if PKGBUILD exists in the current directory and exit if not
 if [ ! -f PKGBUILD ]; then
     echo "PKGBUILD not found in current directory"
@@ -148,6 +153,8 @@ function make_package() {
     prepare || echo "=== Skipping prepare... ==="
     cd ${WORKDIR}
     build || echo "=== Skipping build... ==="
+    cd ${WORKDIR}
+    check  || echo "=== Skipping check... ==="
 
     # Enter fakeroot to do the packaging
     enter_fakeroot
@@ -181,6 +188,8 @@ function make_package() {
     "replaces": "$(join_by , "${REPLACES[@]}")",
 }
 EOL
+
+function convert_to_json() {
     cat << EOL > $PKGBUILDIR/SRCINFO
 {
     "name": "${NAME}",
@@ -199,6 +208,7 @@ EOL
 
 }
 EOL
+}
 
 
     tar cvf "${PKGBUILDIR}/${NAME}-${VERSION}-${UPSTREAM}.tar" PS4PKG data.tar.gz
@@ -281,6 +291,8 @@ function help() {
     echo "      Install the built package"
     echo "  -c"
     echo "      Clean the package build directory"
+    echo "  -p"
+    echo "      Genrate a SRCINFO file"
 }
 
 # Get runtime flags
@@ -300,7 +312,7 @@ while getopts ":hbicpf" opt; do
             clean_package
             ;;
         p)
-            create_PKGINFO
+            convert_to_json
             ;;
         f)
             cd "${PKGBUILDIR}"
