@@ -295,8 +295,6 @@ function help() {
     echo "      Install the built package"
     echo "  -c"
     echo "      Clean the package build directory"
-    echo "  -p"
-    echo "      Genrate a SRCINFO file"
 }
 
 # Get runtime flags
