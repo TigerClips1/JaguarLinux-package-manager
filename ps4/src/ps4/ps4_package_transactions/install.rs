@@ -130,7 +130,7 @@ pub fn run_install(install: InstallTransaction, file: File) {
     // Open data tar for extraction
     let mut data_tar = decompress_gz(
         fs::File::open(
-            format!("{}/tmp/bulge/{}/data.tar.gz", get_root(), &install.package.name)
+            format!("{}/tmp/ps4/{}/data.tar.gz", get_root(), &install.package.name)
         ).expect("Failed to read package!")
     );
 

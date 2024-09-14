@@ -58,7 +58,7 @@ pub fn upgrade() {
 
         let remote_package = remote_package.unwrap();
 
-        // Always force upgrade if the epoch is higher
+        // Always force upgrade if the upstream is higher
         if &remote_package.upstream > &i.upstream {
             updates.push(i.name.clone());
             continue;

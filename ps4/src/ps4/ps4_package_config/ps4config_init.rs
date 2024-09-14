@@ -41,21 +41,25 @@ impl fmt::Debug for ConfigError {
 }
 
 /// All possible config entries.
+/// Reson whu i added allow dead code macros becuse the compiler thinks it not being used even tho it is being used and define 
+#[allow(dead_code)]
 pub enum ConfigEntries {
     Disname,
     Codename,
     Version,
     Architecture,
-    _Colour,
-    _Progressbar,
-    _Repos
+    Colour,
+    Progressbar,
+    Repos
 }
 
 /// All possible repo config entries.
+
+#[allow(dead_code)]
 pub enum RepoEntries {
-    _Name,
-    _Active,
-    _Url
+    Name,
+    Active,
+    Url
 }
 
 /// Struct form of Bulge's config file.

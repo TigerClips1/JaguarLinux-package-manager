@@ -44,9 +44,9 @@ pub fn get_config_entry(entry: ConfigEntries, repo: Option<String>, repo_entry: 
         ConfigEntries::Codename => Ok(config.codename),
         ConfigEntries::Version => Ok(config.version),
         ConfigEntries::Architecture => Ok(config.architecture),
-        ConfigEntries::_Colour => Ok(config.colour.to_string()),
-        ConfigEntries::_Progressbar => Ok(config.progressbar.to_string()),
-        ConfigEntries::_Repos => {
+        ConfigEntries::Colour => Ok(config.colour.to_string()),
+        ConfigEntries::Progressbar => Ok(config.progressbar.to_string()),
+        ConfigEntries::Repos => {
             // Check if a repo and a repo config entry were supplied
             if repo.is_none() && repo_entry.is_none() {
                 for i in config.repos {
@@ -54,9 +54,9 @@ pub fn get_config_entry(entry: ConfigEntries, repo: Option<String>, repo_entry: 
                     if repo.clone().unwrap() == i.name {
                         // Return the requested repo config entry
                         match repo_entry.unwrap() {
-                            RepoEntries::_Name => return Ok(i.name),
-                            RepoEntries::_Active => return Ok(i.active.to_string()),
-                            RepoEntries::_Url => {
+                            RepoEntries::Name => return Ok(i.name),
+                            RepoEntries::Active => return Ok(i.active.to_string()),
+                            RepoEntries::Url => {
                                 if i.url.is_some() {
                                     return Ok(i.url.unwrap());
                                 }
